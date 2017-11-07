@@ -30,6 +30,7 @@ func (c *HttpClient) request(trans *transport.TMemoryBuffer) (err error) {
 
 	// put http response to memory buffer.
 	bytes, err := ioutil.ReadAll(resp.Body)
+
 	if err != nil {
 		return
 	}
@@ -55,7 +56,7 @@ func (c *HttpClient) Call(
 		return
 	}
 
-	if err = c.recv(trans, req, method, seq); err != nil {
+	if err = c.recv(trans, res, method, seq); err != nil {
 		return
 	}
 	return

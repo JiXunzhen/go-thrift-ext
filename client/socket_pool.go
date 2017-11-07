@@ -29,7 +29,7 @@ func (c *ClientPool) Call(
 		trans.Close()
 		return
 	}
-	if err = c.recv(trans, req, method, seq); err != nil {
+	if err = c.recv(trans, res, method, seq); err != nil {
 		trans.Close()
 		return
 	}

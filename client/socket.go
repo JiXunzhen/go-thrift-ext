@@ -58,14 +58,15 @@ func (c *Client) recv(
 ) (err error) {
 	defer conn.ReadMessageEnd()
 
-	name, mtype, rseq, err := conn.ReadMessageBegin()
+	_, mtype, rseq, err := conn.ReadMessageBegin()
 	if err != nil {
 		return
 	}
 
-	if method != name {
-		return errors.New("method name mismatch!")
-	}
+	// NOTE is checking response method name neccessary?
+	// if method != name {
+	// 	return errors.New("method name mismatch!")
+	// }
 
 	if rseq != seq {
 		return errors.New("sequence id out of order!")
@@ -133,7 +134,7 @@ func (c *Client) Call(
 	if err = c.send(trans, req, method, seq); err != nil {
 		return
 	}
-	if err = c.recv(trans, req, method, seq); err != nil {
+	if err = c.recv(trans, res, method, seq); err != nil {
 		return
 	}
 	return
