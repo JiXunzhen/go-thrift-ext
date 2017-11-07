@@ -23,15 +23,19 @@ func (c *ClientPool) Call(
 	if err != nil {
 		return err
 	}
-	defer c.push_back(trans)
 
 	seq := c.get_seq_id()
 	if err = c.send(trans, req, method, seq); err != nil {
+		trans.Close()
 		return
 	}
 	if err = c.recv(trans, req, method, seq); err != nil {
+		trans.Close()
 		return
 	}
+
+	// NOTE only pushback transport while request has been fully served.
+	c.pushback(trans)
 	return
 }
 
@@ -57,7 +61,7 @@ func (c *ClientPool) get_or_create() (trans thrift.Transport, err error) {
 	}
 }
 
-func (c *ClientPool) push_back(conn thrift.Transport) {
+func (c *ClientPool) pushback(conn thrift.Transport) {
 	select {
 	case c.conns <- conn:
 		return
